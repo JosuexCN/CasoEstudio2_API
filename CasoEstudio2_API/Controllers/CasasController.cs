@@ -11,39 +11,32 @@ namespace CasoEstudio2_API.Controllers
 {
     public class CasasController : ApiController
     {
-        //[HttpGet]
-        //[Route("api/ConsultarCasas")]
-        //public List<CasasEnt> ConsultarCasas()
-        //{
-        //    using (var bd = new CasoEstudioLNEntities())
-        //    {
-        //        var datos = (from x in bd.CasasSistema
-        //                     select x).ToList();
+        [HttpGet]
+        [Route("api/ConsultarCasa")]
+        public CasasEnt ConsultarUsuario(long q)
+        {
+            using (var bd = new CasoEstudioLNEntities())
+            {
+                var datos = (from x in bd.CasasSistema
+                             where x.IdCasa == q
+                             select x).FirstOrDefault();
 
-        //        if (datos.Count > 0)
-        //        {
-        //            List<CasasEnt> res = new List<CasasEnt>();
-        //            foreach (var item in datos)
-        //            {
-        //                res.Add(new CasasEnt
-        //                {
-        //                    IdCasa = item.IdCasa,
-        //                    DescripcionCasa = item.DescripcionCasa,
-        //                    PrecioCasa = item.PrecioCasa,
-        //                    UsuarioAlquiler = item.UsuarioAlquiler,
-        //                    FechaAlquiler = (DateTime)item.FechaAlquiler,
-        //                    Estado = "Disponible"
-        //                });
-        //            }
+                if (datos != null)
+                {
+                    CasasEnt res = new CasasEnt();
+                    res.IdCasa = datos.IdCasa;
+                    res.DescripcionCasa = datos.DescripcionCasa;
+                    res.PrecioCasa = datos.PrecioCasa;
+                    res.UsuarioAlquiler = datos.UsuarioAlquiler;
 
-        //            return res;
-        //        }
+                    return res;
+                }
 
-        //        return new List<CasasEnt>();
-        //    }
-        //}
+                return null;
+            }
+        }
 
-      
+
 
         [HttpGet]
         [Route("api/ConsultarCasas")]
