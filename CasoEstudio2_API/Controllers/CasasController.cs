@@ -11,9 +11,11 @@ namespace CasoEstudio2_API.Controllers
 {
     public class CasasController : ApiController
     {
+       
+
         [HttpGet]
         [Route("api/ConsultarCasa")]
-        public CasasEnt ConsultarUsuario(long q)
+        public CasasEnt ConsultarCasa(long q)
         {
             using (var bd = new CasoEstudioLNEntities())
             {
@@ -27,8 +29,9 @@ namespace CasoEstudio2_API.Controllers
                     res.IdCasa = datos.IdCasa;
                     res.DescripcionCasa = datos.DescripcionCasa;
                     res.PrecioCasa = datos.PrecioCasa;
-                    res.UsuarioAlquiler = datos.UsuarioAlquiler;
-
+                    res.UsuarioAlquiler = datos.UsuarioAlquiler ?? "N/A"; 
+                    res.FechaAlquiler = datos.FechaAlquiler.HasValue ? (DateTime)datos.FechaAlquiler : default(DateTime);
+                    res.Estado = (datos.UsuarioAlquiler != null) ? "Reservada" : "Disponible";
                     return res;
                 }
 
@@ -90,5 +93,28 @@ namespace CasoEstudio2_API.Controllers
                 return new List<CasasEnt>();
             }
         }
+
+        [HttpPut]
+        [Route("api/EditarCasas")]
+        public int EditarCasas(CasasEnt entidad)
+        {
+            using (var bd = new CasoEstudioLNEntities())
+            {
+                var datos = (from x in bd.CasasSistema
+                             where x.IdCasa == entidad.IdCasa
+                             select x).FirstOrDefault();
+
+                if (datos != null)
+                {
+                    datos.UsuarioAlquiler = entidad.UsuarioAlquiler;
+                    datos.FechaAlquiler = DateTime.Now;
+                    return bd.SaveChanges();
+                }
+
+                return 0;
+            }
+        }
     }
+
+    
 }
